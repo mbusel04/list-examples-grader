@@ -47,12 +47,18 @@ fi
 
 java -cp $CPATH $JUNIT_CORE $TEST_CLASS &> test-result.txt
 
-# Check JUnit tests results
-if [[ $? -ne 0 ]]
+# Calculate score based on JUnit result
+testLine=`sed -n '2p' test-result.txt`
+maxscore=$(($(echo -n "$testLine" | wc -m) - $(grep -o 'E' <<< "$testLine" | wc -l)))
+score=$(($maxscore - $(grep -o 'E' <<< "$testLine" | wc -l)))
+
+echo "Your score is $score out of $maxscore !"
+
+if [[ $score -ne $maxscore ]]
 then
-    echo "Unit test failure, see result file for more details!"
+    echo "See grading-result.txt for more details."
 else
-    echo "All tests succeded! No errors found!"
+    echo "Good Job!"
 fi
 
 # Write results of grading
